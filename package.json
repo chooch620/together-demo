@@ -29,7 +29,9 @@
     "json-server": "^0.16.1",
     "metro-react-native-babel-preset": "^0.59.0",
     "prettier": "^2.0.4",
+    "react-native-camera": "^3.31.0",
     "react-test-renderer": "16.13.1",
+    "tht-buttons": "^1.0.184",
     "ts-jest": "^26.1.1",
     "typescript": "^3.8.3"
   },
