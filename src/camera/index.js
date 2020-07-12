@@ -27,9 +27,15 @@ export const Camera = (props) => {
   }, [uri]);
 
   const mediaConfirmed = (media) => {
-    console.log('media confirmed');
+    console.log('media confirmed', media);
+    const photo = {
+      id: '1',
+      url: media,
+      width: 500,
+      height: 500,
+    };
     // setShowConfirmation(false);
-    props.onFinish(media);
+    props.onFinish(photo);
   };
 
   return (

@@ -12,14 +12,17 @@ import {
 import {IMAGES} from './src/data';
 import {ProfileImageContainer} from './src/ProfileImageContainer';
 import {Camera} from './src/camera';
+import {APIPhoto} from './src/types';
 
 declare const global: {HermesInternal: null | {}};
 
 const App = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [dummyImages, setDummyImages] = useState(IMAGES);
-  const [profileImages] = useState(
-    dummyImages.map((image) => <ProfileImageContainer image={image} />),
+  const [profileImages, setProfileImages] = useState(
+    dummyImages.map((image) => (
+      <ProfileImageContainer key={image.id} image={image} />
+    )),
   );
 
   const createBlankImages = () => {
@@ -33,11 +36,12 @@ const App = () => {
 
   const blankImages = createBlankImages();
 
-  const handleImageConfirmed = async (confirmedImage: string) => {
-    const newImages = [...dummyImages];
+  const handleImageConfirmed = async (confirmedImage: APIPhoto) => {
+    const newImages = [...profileImages];
     console.log('confirmedImage: ', confirmedImage);
-    newImages.push(confirmedImage); // image returned by camera should be of type APIPhoto - currently a string
-    await setDummyImages(newImages);
+    newImages.push(<ProfileImageContainer image={confirmedImage} />); // image returned by camera should be of type APIPhoto -
+    // currently a string
+    await setProfileImages(newImages);
     setShowCamera(!showCamera);
   };
   return (
@@ -52,7 +56,7 @@ const App = () => {
       </TouchableHighlight>
       <Modal animationType="slide" visible={showCamera}>
         <Camera
-          onFinish={(image: string) => handleImageConfirmed(image)}
+          onFinish={(photo: APIPhoto) => handleImageConfirmed(photo)}
           onCancel={() => setShowCamera(!showCamera)}
         />
       </Modal>

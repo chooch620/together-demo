@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
-  Modal,
   ImageBackground,
   Dimensions,
 } from 'react-native';
@@ -18,7 +17,7 @@ export const ConfirmationPageOne = (props) => {
         <ImageContainer
           uri={props.uri}
           onCancel={() => props.onCancel()}
-          onAdd={() => props.onConfirm()}
+          onAdd={() => props.onConfirm(props.uri)}
         />
       )}
     </View>
