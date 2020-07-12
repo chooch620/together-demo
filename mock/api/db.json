@@ -1,0 +1,55 @@
+{
+  "member": [
+    {
+      "id": 1,
+      "firstName": "Bill",
+      "lastName": "Gates",
+      "email": "bill@microsoft.com"
+    }
+  ],
+  "photos": [
+    {
+      "memberId": "1",
+      "photos": [
+        {
+          "id": "11111111",
+          "url": "https://collectionimages.npg.org.uk/large/mw82857/Bill-Gates.jpg",
+          "width": 796,
+          "height": 800,
+          "centerX": 366,
+          "centerY": 408
+        },
+        {
+          "id": "11111112",
+          "url": "https://i.pinimg.com/564x/87/64/76/876476178e8cd6bcaab1269f7283d97b.jpg",
+          "width": 480,
+          "height": 768,
+          "centerX": 259,
+          "centerY": 361
+        },
+        {
+          "id": "11111113",
+          "url": "https://media.king5.com/assets/KING/images/156daac9-f162-4c82-bb78-6edc4225d9ae/156daac9-f162-4c82-bb78-6edc4225d9ae_750x422.jpg",
+          "width": 750,
+          "height": 422,
+          "centerX": 349,
+          "centerY": 203
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "memberId": "1",
+      "photos": [
+        {
+          "id": "11111114",
+          "url": "https://collectionimages.npg.org.uk/large/mw82857/Bill-Gates.jpg",
+          "width": 796,
+          "height": 800,
+          "centerX": 366,
+          "centerY": 408
+        }
+      ]
+    }
+  ]
+}

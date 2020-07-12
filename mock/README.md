@@ -1,0 +1,1 @@
+Example request file is in 'request.json'. You can use this to test posting to the mock service.

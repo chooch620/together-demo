@@ -1,0 +1,13 @@
+{
+  "name": "interview-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "mock": "json-server --watch api/db.json --port 3000"
+  },
+  "author": "",
+  "dependencies": {
+    "json-server": "^0.16.1"
+  }
+}

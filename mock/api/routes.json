@@ -1,0 +1,3 @@
+{
+    "/member/:memberId/photos": "/photos?memberId=:memberId"
+}
