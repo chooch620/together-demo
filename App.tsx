@@ -18,36 +18,48 @@ declare const global: {HermesInternal: null | {}};
 
 const App = () => {
   const [showCamera, setShowCamera] = useState(false);
-  const [dummyImages, setDummyImages] = useState(IMAGES);
   const [profileImages, setProfileImages] = useState(
-    dummyImages.map((image) => (
-      <ProfileImageContainer key={image.id} image={image} />
+    IMAGES.map((profileImage, index) => (
+      <ProfileImageContainer
+        key={index}
+        deleteImage={(image: APIPhoto) => handleOnDelete(image)}
+        addImage={() => setShowCamera(!showCamera)}
+        image={profileImage}
+      />
     )),
   );
 
-  const createBlankImages = () => {
-    const numOfBlankImages = 9 - IMAGES.length;
-    const images = [];
-    for (let i = numOfBlankImages; i > 0; i--) {
-      images.push(<ProfileImageContainer key={i} />);
+  const handleOnDelete = (image: APIPhoto) => {
+    let imageRemoved = false;
+    const newProfileImages = [...profileImages];
+    for (const profileImageContainer of profileImages) {
+      const imageObj = profileImageContainer.props.image;
+      if (imageObj.id === image.id) {
+        newProfileImages.splice(profileImageContainer.key as number, 1);
+        imageRemoved = true;
+      }
     }
-    return images;
+    setProfileImages(newProfileImages);
   };
 
-  const blankImages = createBlankImages();
-
-  const handleImageConfirmed = async (confirmedImage: APIPhoto) => {
+  const handleImageConfirmed = (confirmedImage: APIPhoto) => {
     const newImages = [...profileImages];
     console.log('confirmedImage: ', confirmedImage);
-    newImages.push(<ProfileImageContainer image={confirmedImage} />); // image returned by camera should be of type APIPhoto -
-    // currently a string
-    await setProfileImages(newImages);
+    newImages.push(
+      <ProfileImageContainer
+        deleteImage={(image: APIPhoto) => handleOnDelete(image)}
+        addImage={() => setShowCamera(!showCamera)}
+        image={confirmedImage}
+        key={profileImages.length}
+      />,
+    );
+    setProfileImages(newImages);
     setShowCamera(!showCamera);
   };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.images}>{profileImages}</View>
-      <View style={styles.images}>{blankImages}</View>
+      {/*<View style={styles.images}>{blankImages}</View>*/}
       <TouchableHighlight
         style={styles.addImageButton}
         onPress={() => setShowCamera(!showCamera)}
@@ -74,7 +86,7 @@ const styles = StyleSheet.create({
   images: {
     flex: 1,
     alignItems: 'stretch',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     flexDirection: 'row',
     flexWrap: 'wrap',
   },

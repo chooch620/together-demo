@@ -11,17 +11,22 @@ import {APIPhoto, ProfileImageFAB} from './types';
 
 interface Props {
   image?: APIPhoto;
+  deleteImage: (item: APIPhoto) => void;
+  addImage: () => void;
 }
 
 export const ProfileImageContainer: React.FC<Props> = (props: Props) => {
-  const imageSupplied = props.image;
   // Determines what FAB to display
   const [FAB, setFAB] = useState<ProfileImageFAB>(
-    imageSupplied ? ProfileImageFAB.DELETE : ProfileImageFAB.ADD,
+    props.image ? ProfileImageFAB.DELETE : ProfileImageFAB.ADD,
   );
 
   const handleFABPress = () => {
-    console.log('fab pressed');
+    if (props.image) {
+      props.deleteImage(props.image);
+    } else {
+      props.addImage();
+    }
   };
 
   return (
