@@ -1,107 +1,93 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
+  Dimensions,
   SafeAreaView,
   StyleSheet,
-  ScrollView,
-  View,
   Text,
-  StatusBar,
+  TouchableHighlight,
+  View,
+  Modal,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {IMAGES} from './src/data';
+import {ProfileImageContainer} from './src/ProfileImageContainer';
+import {Camera} from './src/camera';
 
 declare const global: {HermesInternal: null | {}};
 
 const App = () => {
+  const [showCamera, setShowCamera] = useState(false);
+  const [dummyImages, setDummyImages] = useState(IMAGES);
+  const [profileImages] = useState(
+    dummyImages.map((image) => <ProfileImageContainer image={image} />),
+  );
+
+  const createBlankImages = () => {
+    const numOfBlankImages = 9 - IMAGES.length;
+    const images = [];
+    for (let i = numOfBlankImages; i > 0; i--) {
+      images.push(<ProfileImageContainer key={i} />);
+    }
+    return images;
+  };
+
+  const blankImages = createBlankImages();
+
+  const handleImageConfirmed = async (confirmedImage: string) => {
+    const newImages = [...dummyImages];
+    console.log('confirmedImage: ', confirmedImage);
+    newImages.push(confirmedImage); // image returned by camera should be of type APIPhoto - currently a string
+    await setDummyImages(newImages);
+    setShowCamera(!showCamera);
+  };
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.tsx</Text> to change
-                this screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.images}>{profileImages}</View>
+      <View style={styles.images}>{blankImages}</View>
+      <TouchableHighlight
+        style={styles.addImageButton}
+        onPress={() => setShowCamera(!showCamera)}
+        testID="fabButton">
+        <Text style={styles.addButtonText}>Add Image</Text>
+      </TouchableHighlight>
+      <Modal animationType="slide" visible={showCamera}>
+        <Camera
+          onFinish={(image: string) => handleImageConfirmed(image)}
+          onCancel={() => setShowCamera(!showCamera)}
+        />
+      </Modal>
+    </SafeAreaView>
   );
 };
 
+const deviceWidth = Dimensions.get('window').width;
+const deviceHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flex: 1,
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
+  images: {
+    flex: 1,
+    alignItems: 'stretch',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
-  body: {
-    backgroundColor: Colors.white,
+
+  addImageButton: {
+    backgroundColor: 'red',
+    margin: 10,
+    width: deviceWidth / 1.5,
+    height: deviceHeight / 20,
+    borderRadius: 10,
+    alignSelf: 'center',
   },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+
+  addButtonText: {
+    textAlign: 'center',
+    color: 'white',
+    fontSize: 20,
   },
 });
 
