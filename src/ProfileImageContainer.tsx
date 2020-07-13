@@ -37,8 +37,9 @@ export const ProfileImageContainer: React.FC<Props> = (props: Props) => {
     <View style={styles.container}>
       {props.image && (
         <ImageBackground
-          style={[styles.imageContainer, styles.image]}
-          source={{uri: props.image.url}}>
+          style={[styles.imageContainer]}
+          source={{uri: props.image.url}}
+          imageStyle={styles.image}>
           <FABButton
             text={FAB}
             onPress={() => handleFABPress()}
@@ -88,7 +89,11 @@ const deviceHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 5,
+    margin: 5,
+    width: deviceWidth / 3.3,
+    height: deviceHeight / 4.5,
+    borderWidth: 1,
+    borderRadius: 10,
   },
   team: {
     alignSelf: 'center',
@@ -99,14 +104,15 @@ const styles = StyleSheet.create({
     height: deviceHeight / 4.5,
     // backgroundColor: "blue",
     // margin: 2,
-    borderWidth: 1,
+  },
+
+  image: {
     borderRadius: 10,
   },
 
-  image: {},
-
   blankImage: {
     backgroundColor: '#c1c1c1',
+    borderRadius: 10,
   },
 
   fab: {
