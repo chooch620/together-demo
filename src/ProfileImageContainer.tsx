@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const ProfileImageContainer: React.FC<Props> = (props: Props) => {
-  console.log('image supplied: ', props.image);
+  console.log('image supplied: ', props);
   // Determines what FAB to display
   const [FAB, setFAB] = useState<ProfileImageFAB>(
     props.image ? ProfileImageFAB.DELETE : ProfileImageFAB.ADD,
@@ -26,7 +26,10 @@ export const ProfileImageContainer: React.FC<Props> = (props: Props) => {
     if (props.image) {
       props.deleteImage && props.deleteImage(props.image);
     } else {
-      props.addImage && props.addImage();
+      console.log('else: ', props.addImage);
+      if (props.addImage !== undefined) {
+        props.addImage();
+      }
     }
   };
 
@@ -48,7 +51,7 @@ export const ProfileImageContainer: React.FC<Props> = (props: Props) => {
           <FABButton
             text={FAB}
             onPress={() => handleFABPress()}
-            isDeleteButton={true}
+            isDeleteButton={false}
           />
         </View>
       )}

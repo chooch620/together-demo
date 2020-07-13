@@ -44,33 +44,28 @@ const App = () => {
   function createBlankImages() {
     const blankImages = [];
     for (let i = numOfImages; i < 9; i++) {
-      blankImages.push(<ProfileImageContainer key={`blankImage${i + 1}`} />);
+      blankImages.push(createBlankImage(i));
     }
     return blankImages;
   }
 
+  function createBlankImage(index: number) {
+    return (
+      <ProfileImageContainer
+        key={`blankImage${index + 1}`}
+        addImage={() => setShowCamera(!showCamera)}
+      />
+    );
+  }
+
   const handleOnDelete = (imageToDelete: APIPhoto) => {
-    let imageRemoved = false;
     const newProfileImages = [...profileImages];
     for (let i = 0; i < profileImages.length; i++) {
       const profileImageContainer = profileImages[i];
       // console.log('profileImageContainer: ', profileImageContainer);
-      const imageObj = profileImageContainer.props.image;
-      if (imageObj && imageObj.id === imageToDelete.id) {
-        newProfileImages[i] = (
-          <ProfileImageContainer
-            key={`blankImage${i + 1}`}
-            // deleteImage={(image: APIPhoto) => handleOnDelete(image)}
-            // addImage={() => setShowCamera(!showCamera)}
-            // image={imageObj}
-          />
-        );
-        imageRemoved = true;
-      } else {
-        if (imageRemoved) {
-          const key = profileImageContainer.key as number;
-          // console.log('key: ', key);
-        }
+      const {image} = profileImageContainer.props;
+      if (image && image.id === imageToDelete.id) {
+        newProfileImages[i] = createBlankImage(i);
       }
     }
     console.log('profileImages: ', profileImages);
@@ -81,14 +76,23 @@ const App = () => {
   const handleImageConfirmed = (confirmedImage: APIPhoto) => {
     const newImages = [...profileImages];
     console.log('confirmedImage: ', confirmedImage);
-    newImages.push(
+    let indexToInsertImageAt = 0;
+    for (let i = 0; i < profileImages.length; i++) {
+      console.log('item: ', profileImages[i]);
+      const key = profileImages[i].key as string;
+      if (key.substring(0, 3) === 'bla') {
+        indexToInsertImageAt = i;
+        break;
+      }
+    }
+    newImages[indexToInsertImageAt] = (
       <ProfileImageContainer
         deleteImage={(image: APIPhoto) => handleOnDelete(image)}
-        addImage={() => setShowCamera(!showCamera)}
         image={confirmedImage}
         key={profileImages.length}
-      />,
+      />
     );
+
     setProfileImages(newImages);
     setShowCamera(!showCamera);
   };
