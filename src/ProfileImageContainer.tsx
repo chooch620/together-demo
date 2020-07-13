@@ -11,11 +11,12 @@ import {APIPhoto, ProfileImageFAB} from './types';
 
 interface Props {
   image?: APIPhoto;
-  deleteImage: (item: APIPhoto) => void;
-  addImage: () => void;
+  deleteImage?: (item: APIPhoto) => void;
+  addImage?: () => void;
 }
 
 export const ProfileImageContainer: React.FC<Props> = (props: Props) => {
+  console.log('image supplied: ', props.image);
   // Determines what FAB to display
   const [FAB, setFAB] = useState<ProfileImageFAB>(
     props.image ? ProfileImageFAB.DELETE : ProfileImageFAB.ADD,
@@ -23,31 +24,59 @@ export const ProfileImageContainer: React.FC<Props> = (props: Props) => {
 
   const handleFABPress = () => {
     if (props.image) {
-      props.deleteImage(props.image);
+      props.deleteImage && props.deleteImage(props.image);
     } else {
-      props.addImage();
+      props.addImage && props.addImage();
     }
   };
 
   return (
     <View style={styles.container}>
       {props.image && (
-        <ImageBackground style={styles.image} source={{uri: props.image.url}}>
-          <TouchableHighlight
-            style={[styles.fab, props.image ? styles.delete : styles.add]}
+        <ImageBackground
+          style={[styles.imageContainer, styles.image]}
+          source={{uri: props.image.url}}>
+          <FABButton
+            text={FAB}
             onPress={() => handleFABPress()}
-            testID="fabButton">
-            <Text
-              style={[
-                styles.fabText,
-                props.image ? styles.deleteText : styles.addText,
-              ]}>
-              {FAB}
-            </Text>
-          </TouchableHighlight>
+            isDeleteButton={true}
+          />
         </ImageBackground>
       )}
+      {props.image === undefined && (
+        <View style={[styles.imageContainer, styles.blankImage]}>
+          <FABButton
+            text={FAB}
+            onPress={() => handleFABPress()}
+            isDeleteButton={true}
+          />
+        </View>
+      )}
     </View>
+  );
+};
+
+type FABButtonProps = {
+  text: string;
+  isDeleteButton: boolean;
+  onPress: () => void;
+};
+
+const FABButton = (props: FABButtonProps) => {
+  const {text, isDeleteButton, onPress} = props;
+  return (
+    <TouchableHighlight
+      style={[styles.fab, isDeleteButton ? styles.delete : styles.add]}
+      onPress={() => onPress()}
+      testID="fabButton">
+      <Text
+        style={[
+          styles.fabText,
+          isDeleteButton ? styles.deleteText : styles.addText,
+        ]}>
+        {text}
+      </Text>
+    </TouchableHighlight>
   );
 };
 
@@ -62,12 +91,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 
-  image: {
+  imageContainer: {
     width: deviceWidth / 3.3,
     height: deviceHeight / 4.5,
     // backgroundColor: "blue",
     // margin: 2,
     borderWidth: 1,
+    borderRadius: 10,
+  },
+
+  image: {},
+
+  blankImage: {
+    backgroundColor: '#c1c1c1',
   },
 
   fab: {

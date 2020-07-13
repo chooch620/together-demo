@@ -18,27 +18,63 @@ declare const global: {HermesInternal: null | {}};
 
 const App = () => {
   const [showCamera, setShowCamera] = useState(false);
-  const [profileImages, setProfileImages] = useState(
-    IMAGES.map((profileImage, index) => (
+  const [numOfImages, setNumOfImages] = useState(IMAGES.length);
+
+  const createImageGrid = () => {
+    const uploadedImages = createProfileImages();
+
+    const blankImages = createBlankImages();
+    console.log('images: ', [...uploadedImages, ...blankImages]);
+    return [...uploadedImages, ...blankImages];
+  };
+
+  const [profileImages, setProfileImages] = useState(createImageGrid());
+
+  function createProfileImages() {
+    return IMAGES.map((profileImage: APIPhoto) => (
       <ProfileImageContainer
-        key={index}
-        deleteImage={(image: APIPhoto) => handleOnDelete(image)}
+        key={profileImage.id}
+        deleteImage={(imageToDelete: APIPhoto) => handleOnDelete(imageToDelete)}
         addImage={() => setShowCamera(!showCamera)}
         image={profileImage}
       />
-    )),
-  );
+    ));
+  }
 
-  const handleOnDelete = (image: APIPhoto) => {
+  function createBlankImages() {
+    const blankImages = [];
+    for (let i = numOfImages; i < 9; i++) {
+      blankImages.push(<ProfileImageContainer key={`blankImage${i + 1}`} />);
+    }
+    return blankImages;
+  }
+
+  const handleOnDelete = (imageToDelete: APIPhoto) => {
     let imageRemoved = false;
     const newProfileImages = [...profileImages];
-    for (const profileImageContainer of profileImages) {
+    for (let i = 0; i < profileImages.length; i++) {
+      const profileImageContainer = profileImages[i];
+      // console.log('profileImageContainer: ', profileImageContainer);
       const imageObj = profileImageContainer.props.image;
-      if (imageObj.id === image.id) {
-        newProfileImages.splice(profileImageContainer.key as number, 1);
+      if (imageObj && imageObj.id === imageToDelete.id) {
+        newProfileImages[i] = (
+          <ProfileImageContainer
+            key={`blankImage${i + 1}`}
+            // deleteImage={(image: APIPhoto) => handleOnDelete(image)}
+            // addImage={() => setShowCamera(!showCamera)}
+            // image={imageObj}
+          />
+        );
         imageRemoved = true;
+      } else {
+        if (imageRemoved) {
+          const key = profileImageContainer.key as number;
+          // console.log('key: ', key);
+        }
       }
     }
+    console.log('profileImages: ', profileImages);
+    console.log('newProfileImages: ', newProfileImages);
     setProfileImages(newProfileImages);
   };
 
@@ -59,7 +95,6 @@ const App = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.images}>{profileImages}</View>
-      {/*<View style={styles.images}>{blankImages}</View>*/}
       <TouchableHighlight
         style={styles.addImageButton}
         onPress={() => setShowCamera(!showCamera)}

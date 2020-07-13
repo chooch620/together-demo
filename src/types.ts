@@ -9,4 +9,3 @@ export enum ProfileImageFAB {
   'DELETE' = 'X',
   'ADD' = '+',
 }
-// export type ProfileImageFAB = {}
