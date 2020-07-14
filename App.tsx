@@ -1,20 +1,18 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Dimensions,
   SafeAreaView,
   StyleSheet,
-  Text,
-  TouchableHighlight,
   View,
   Modal,
+  TouchableHighlight,
+  Text,
 } from 'react-native';
 
 import {IMAGES} from './src/data';
 import {ProfileImageContainer} from './src/ProfileImageContainer';
 import {Camera} from './src/camera';
 import {APIPhoto} from './src/types';
-
-declare const global: {HermesInternal: null | {}};
 
 const App = () => {
   const [showCamera, setShowCamera] = useState(false);
@@ -43,6 +41,7 @@ const App = () => {
 
   function createBlankImages() {
     const blankImages = [];
+    console.log('numOfImages: ', numOfImages);
     for (let i = numOfImages; i < 9; i++) {
       blankImages.push(createBlankImage(i));
     }
@@ -59,19 +58,29 @@ const App = () => {
   }
 
   const handleOnDelete = (imageToDelete: APIPhoto) => {
+    let imageRemoved = false;
     const newProfileImages = [...profileImages];
     for (let i = 0; i < profileImages.length; i++) {
       const profileImageContainer = profileImages[i];
       // console.log('profileImageContainer: ', profileImageContainer);
       const {image} = profileImageContainer.props;
+      // found image to be deleted
       if (image && image.id === imageToDelete.id) {
         newProfileImages[i] = createBlankImage(i);
+        setNumOfImages(numOfImages - 1);
+        imageRemoved = true;
+      } else {
+        if (imageRemoved) {
+        }
       }
     }
-    console.log('profileImages: ', profileImages);
     console.log('newProfileImages: ', newProfileImages);
     setProfileImages(newProfileImages);
   };
+
+  useEffect(() => {
+    console.log('profileImages useEffect: ', profileImages);
+  }, [profileImages]);
 
   const handleImageConfirmed = (confirmedImage: APIPhoto) => {
     const newImages = [...profileImages];
@@ -82,6 +91,7 @@ const App = () => {
       const key = profileImages[i].key as string;
       if (key.substring(0, 3) === 'bla') {
         indexToInsertImageAt = i;
+        setNumOfImages(numOfImages + 1);
         break;
       }
     }
@@ -96,14 +106,26 @@ const App = () => {
     setProfileImages(newImages);
     setShowCamera(!showCamera);
   };
+
+  async function makeFetch() {
+    console.log('makeFetch called');
+    const options = {
+      method: 'GET'
+    };
+
+    await fetch('http://localhost:3000/member/1/photos', options)
+      .then((resp) => resp.json())
+      .then((data) => console.log('data: ', data))
+      .catch((err) => console.log('err: ', err));
+  }
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.images}>{profileImages}</View>
       <TouchableHighlight
-        style={styles.addImageButton}
-        onPress={() => setShowCamera(!showCamera)}
-        testID="fabButton">
-        <Text style={styles.addButtonText}>Add Image</Text>
+        style={[styles.fetchButton]}
+        onPress={() => makeFetch()}
+        testID="basebutton">
+        <Text>Fetch</Text>
       </TouchableHighlight>
       <Modal animationType="slide" visible={showCamera}>
         <Camera
@@ -143,6 +165,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
     fontSize: 20,
+  },
+
+  fetchButton: {
+    width: deviceWidth / 1.5,
+    height: deviceHeight / 10,
   },
 });
 
